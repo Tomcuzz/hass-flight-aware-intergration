@@ -5,6 +5,8 @@ from homeassistant.config_entries import ConfigEntry
 
 from .const import DOMAIN, PLATFORMS
 
+_LOGGER = logging.getLogger(__name__)
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up FlightAware Tracker from a config entry."""
     # Store the Config Entry object so other platforms can access data/options
