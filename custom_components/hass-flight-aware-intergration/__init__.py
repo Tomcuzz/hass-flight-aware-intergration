@@ -1,5 +1,6 @@
 # __init__.py
 
+import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 
