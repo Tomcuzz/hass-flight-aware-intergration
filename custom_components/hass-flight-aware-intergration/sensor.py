@@ -105,7 +105,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator.flight_input = flight_input.unique_id
 
     # Initial fetch
-    await coordinator.async_config_entry_first_refresh()
+    # await coordinator.async_config_entry_first_refresh()
 
     async_add_entities([
         flight_input,
