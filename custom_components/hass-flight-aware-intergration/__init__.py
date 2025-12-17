@@ -36,14 +36,6 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
     await hass.config_entries.async_reload(entry.entry_id)
 
-async def async_setup_entry(hass, entry):
-    """Set up FlightAware from a config entry."""
-    # ... your setup logic (API clients, etc.) ...
-    
-    # Forward the setup to the sensor platform
-    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
-    return True
-
 # --- Platform Setup ---
 # async def async_setup_entry(hass, entry, async_add_entities):
 #     """Set up the sensor platform."""
