@@ -84,20 +84,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             return self.flight_data
         else:
             raise UpdateFailed("Predicted arrival time not found in response.")
-
-
-class FlightAwarePredictedFlightInput(TextEntity):
-    # Implement one of these methods.
-    def __init__(self, coordinator):
-        """Initialize the sensor."""
-        self.coordinator = coordinator
-        self._attr_name = "Predicted Flight Input"
-        self._attr_unique_id = f"flightaware_flight_number_{coordinator.config_entry.entry_id}"
-        self.unique_id = self._attr_unique_id
-        self._attr_icon = "mdi:airplane-takeoff"
-
-    async def async_set_value(self, value: str) -> None:
-        """Set the text value."""
         
 
 # --- Platform Setup ---
@@ -123,6 +109,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
         flight_input,
         FlightAwarePredictedArrivalSensor(coordinator)
     ], True)
+
+
+class FlightAwarePredictedFlightInput(TextEntity):
+    # Implement one of these methods.
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self._attr_name = "Predicted Flight Input"
+        self._attr_unique_id = f"flightaware_flight_number_{coordinator.config_entry.entry_id}"
+        self.unique_id = self._attr_unique_id
+        self._attr_icon = "mdi:airplane-takeoff"
+
+    async def async_set_value(self, value: str) -> None:
+        """Set the text value."""
 
 # --- Sensor Entity ---
 class FlightAwarePredictedArrivalSensor(SensorEntity):
