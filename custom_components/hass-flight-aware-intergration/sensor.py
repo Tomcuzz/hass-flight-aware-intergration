@@ -59,8 +59,11 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
 
         try:
             # Use hass.async_add_executor_job for blocking network calls
+            # response = await self.hass.async_add_executor_job(
+            #     requests.get, url, headers=headers, timeout=10
+            # )
             response = await self.hass.async_add_executor_job(
-                requests.get, url, headers=headers, timeout=10
+                lambda: requests.get(url, headers=headers, timeout=10)
             )
             response.raise_for_status()
             data = response.json()
