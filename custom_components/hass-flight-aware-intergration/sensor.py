@@ -41,15 +41,14 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         flight_entity = self.hass.states.get("input_text.flight_number_to_track")
         
         if flight_entity is None:
-            # Option A: Log a warning and skip the update
             _LOGGER.warning("Input text entity 'input_text.flight_number_to_track' not found")
-            return None # Or raise UpdateFailed
+            return UpdateFailed("Input text entity 'input_text.flight_number_to_track' not found") # Or raise UpdateFailed
         
         flight_number = flight_entity.state
         
         if not flight_number or flight_number in ["unknown", "unavailable"]:
             _LOGGER.debug("Flight number is empty or unavailable")
-            return None
+            return UpdateFailed("Flight number is empty or unavailable")
         
         if not flight_number:
             raise UpdateFailed("Flight number input is empty.")
