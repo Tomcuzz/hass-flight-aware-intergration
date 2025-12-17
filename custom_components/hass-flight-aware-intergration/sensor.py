@@ -13,7 +13,6 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-
 # --- Data Fetching Class (Centralized Logic) ---
 class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
     """Coordinator to fetch data from FlightAware API."""
