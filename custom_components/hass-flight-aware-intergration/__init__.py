@@ -36,25 +36,33 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
     await hass.config_entries.async_reload(entry.entry_id)
 
+async def async_setup_entry(hass, entry):
+    """Set up FlightAware from a config entry."""
+    # ... your setup logic (API clients, etc.) ...
+    
+    # Forward the setup to the sensor platform
+    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
+    return True
+
 # --- Platform Setup ---
-async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the sensor platform."""
+# async def async_setup_entry(hass, entry, async_add_entities):
+#     """Set up the sensor platform."""
     
-    # Get the configuration data from the Config Entry
-    api_key = entry.data[CONF_API_KEY]
-    # Get the polling interval from options (or use the initial default if not changed)
-    interval_seconds = entry.options.get(CONF_SCAN_INTERVAL, 300) 
+#     # Get the configuration data from the Config Entry
+#     api_key = entry.data[CONF_API_KEY]
+#     # Get the polling interval from options (or use the initial default if not changed)
+#     interval_seconds = entry.options.get(CONF_SCAN_INTERVAL, 300) 
     
-    # Create the coordinator and set the user-defined polling interval
-    coordinator = FlightAwareDataUpdateCoordinator(hass, api_key)
-    coordinator.update_interval = timedelta(seconds=interval_seconds)
+#     # Create the coordinator and set the user-defined polling interval
+#     coordinator = FlightAwareDataUpdateCoordinator(hass, api_key)
+#     coordinator.update_interval = timedelta(seconds=interval_seconds)
 
-    # Initial fetch
-    await coordinator.async_config_entry_first_refresh()
+#     # Initial fetch
+#     await coordinator.async_config_entry_first_refresh()
 
-    async_add_entities([
-        FlightAwarePredictedArrivalSensor(coordinator)
-    ], True)
+#     async_add_entities([
+#         FlightAwarePredictedArrivalSensor(coordinator)
+#     ], True)
 
 # async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 #     # 1. Initialize your API client
