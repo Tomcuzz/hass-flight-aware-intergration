@@ -94,7 +94,7 @@ class FlightAwarePredictedFlightInput(TextEntity):
         self.coordinator = coordinator
         self._attr_name = "Predicted Flight Arrival Time"
         self._attr_unique_id = f"flightaware_flight_number_{coordinator.config_entry.entry_id}"
-        self.unique_id = _attr_unique_id
+        self.unique_id = self._attr_unique_id
         self._attr_icon = "mdi:airplane-takeoff"
 
     async def async_set_value(self, value: str) -> None:
