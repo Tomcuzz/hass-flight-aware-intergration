@@ -115,8 +115,12 @@ class FlightAwarePredictedArrivalSensor(SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        # Get data from the coordinator's stored data
-        return self.coordinator.data.get("predicted_arrival")
+        # 1. Check if coordinator data exists at all
+        if self.coordinator.data is None:
+            return None
+    
+        # 2. Safely get the value
+        return self.coordinator.flight_data.get("predicted_arrival")
     
     @property
     def should_poll(self):
