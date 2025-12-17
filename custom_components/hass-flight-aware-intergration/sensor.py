@@ -113,14 +113,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = FlightAwareDataUpdateCoordinator(hass, api_key)
     coordinator.update_interval = timedelta(seconds=interval_seconds)
     
-    flight_intput = FlightAwarePredictedFlightInput(coordinator)
-    coordinator.flight_input = flight_intput.unique_id
+    flight_input = FlightAwarePredictedFlightInput(coordinator)
+    coordinator.flight_input = flight_input.unique_id
 
     # Initial fetch
     await coordinator.async_config_entry_first_refresh()
 
     async_add_entities([
-        flight_intput,
+        flight_input,
         FlightAwarePredictedArrivalSensor(coordinator)
     ], True)
 
