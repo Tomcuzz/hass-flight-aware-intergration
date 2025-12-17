@@ -125,7 +125,7 @@ class FlightAwarePredictedFlightInput(TextEntity):
         """Set the text value."""
 
 # --- Sensor Entity ---
-class FlightAwarePredictedArrivalSensor(SensorEntity):
+class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
     """Representation of a FlightAware Predicted Arrival Time sensor."""
 
     def __init__(self, coordinator):
