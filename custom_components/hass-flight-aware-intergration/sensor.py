@@ -5,6 +5,7 @@ from datetime import timedelta
 import requests
 
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.text import TextEntity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.helpers.entity import DeviceInfo
