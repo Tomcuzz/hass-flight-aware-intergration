@@ -119,7 +119,7 @@ class FlightAwarePredictedArrivalSensor(SensorEntity):
         """Return the state of the sensor."""
         # 1. Check if coordinator data exists at all
         if self.coordinator.data is None:
-            return None
+            return "unavailable"
     
         # 2. Safely get the value
         return self.coordinator.flight_data.get("predicted_arrival")
