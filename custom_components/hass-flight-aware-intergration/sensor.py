@@ -91,7 +91,7 @@ class FlightAwarePredictedFlightInput(TextEntity):
     def __init__(self, coordinator):
         """Initialize the sensor."""
         self.coordinator = coordinator
-        self._attr_name = "Predicted Flight Arrival Time"
+        self._attr_name = "Predicted Flight Input"
         self._attr_unique_id = f"flightaware_flight_number_{coordinator.config_entry.entry_id}"
         self.unique_id = self._attr_unique_id
         self._attr_icon = "mdi:airplane-takeoff"
