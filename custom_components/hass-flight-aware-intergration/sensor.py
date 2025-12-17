@@ -72,6 +72,9 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         except requests.exceptions.RequestException as err:
             raise UpdateFailed(f"Error fetching data from FlightAware API: {err}") from err
 
+        raise UpdateFailed(data)
+
+
         predicted_arrival = None
         if data.get('flights'):
             flight_info = data['flights'][0]
