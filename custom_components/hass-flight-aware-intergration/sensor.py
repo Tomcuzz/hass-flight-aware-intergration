@@ -36,8 +36,21 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         # on the entity itself, or a service call, but for this simpler 
         # design, we'll keep the input_text dependency as before, 
         # passed into the coordinator on creation or via an update.
-        flight_number = self.hass.states.get("input_text.flight_number_to_track").state
+        # flight_number = self.hass.states.get("input_text.flight_number_to_track").state
 
+        flight_entity = self.hass.states.get("input_text.flight_number_to_track")
+        
+        if flight_entity is None:
+            # Option A: Log a warning and skip the update
+            _LOGGER.warning("Input text entity 'input_text.flight_number_to_track' not found")
+            return None # Or raise UpdateFailed
+        
+        flight_number = flight_entity.state
+        
+        if not flight_number or flight_number in ["unknown", "unavailable"]:
+            _LOGGER.debug("Flight number is empty or unavailable")
+            return None
+        
         if not flight_number:
             raise UpdateFailed("Flight number input is empty.")
 
