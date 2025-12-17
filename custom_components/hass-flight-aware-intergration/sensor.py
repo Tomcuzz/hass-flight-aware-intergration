@@ -72,9 +72,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         except requests.exceptions.RequestException as err:
             raise UpdateFailed(f"Error fetching data from FlightAware API: {err}") from err
 
-        raise UpdateFailed(data)
-
-
         predicted_arrival = None
         if data.get('flights'):
             flight_info = data['flights'][0]
@@ -142,7 +139,7 @@ class FlightAwarePredictedArrivalSensor(SensorEntity):
     def native_value(self):
         """Return the state of the sensor."""
         # 1. Check if coordinator data exists at all
-        if self.coordinator.data is None:
+        if self.coordinator.flight_data is None:
             return "unavailable"
     
         # 2. Safely get the value
