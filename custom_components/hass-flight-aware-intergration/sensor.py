@@ -79,7 +79,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         if data.get('flights'):
             flight_info = data['flights'][0]
             # Assumed key for demonstration
-            predicted_arrival = flight_info.get('estimated_arrival_time') 
+            predicted_arrival = flight_info.get('estimated_in') 
 
         if predicted_arrival:
             # Store the data
