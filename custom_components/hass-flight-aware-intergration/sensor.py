@@ -64,9 +64,10 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             # response = await self.hass.async_add_executor_job(
             #     requests.get, url, headers=headers, timeout=10
             # )
-            response = await self.hass.async_add_executor_job(
-                lambda: requests.get(url, headers=headers, timeout=10)
-            )
+            # response = await self.hass.async_add_executor_job(
+            #     lambda: requests.get(url, headers=headers, timeout=10)
+            # )
+            response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
             data = response.json()
         except requests.exceptions.RequestException as err:
