@@ -47,8 +47,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         #     return UpdateFailed("Input text entity 'input_text.flight_number_to_track' not found") # Or raise UpdateFailed
         
         # flight_number = flight_entity.state
-        self.flight_data = {"predicted_arrival": "00:38:00"}
-        return self.flight_data
         flight_number = "BA825"
         
         if not flight_number or flight_number in ["unknown", "unavailable"]:
