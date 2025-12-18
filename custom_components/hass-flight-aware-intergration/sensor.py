@@ -40,14 +40,17 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         # passed into the coordinator on creation or via an update.
         # flight_number = self.hass.states.get("input_text.flight_number_to_track").state
 
-        # flight_entity = self.hass.states.get("input_text.flight_number_to_track")
+        flight_entity = self.hass.states.get("input_text.flight_number_to_track")
         
-        # if flight_entity is None:
-        #     _LOGGER.warning("Input text entity 'input_text.flight_number_to_track' not found")
-        #     return UpdateFailed("Input text entity 'input_text.flight_number_to_track' not found") # Or raise UpdateFailed
+        if flight_entity is None:
+            _LOGGER.warning("Input text entity 'input_text.flight_number_to_track' not found")
+            return UpdateFailed("Input text entity 'input_text.flight_number_to_track' not found") # Or raise UpdateFailed
         
-        # flight_number = flight_entity.state
-        flight_number = "BA825"
+        flight_number = flight_entity.state
+        self.flight_data = {"predicted_arrival": flight_number}
+        return self.flight_data
+        
+        # flight_number = "BA825"
         
         if not flight_number or flight_number in ["unknown", "unavailable"]:
             _LOGGER.debug("Flight number is empty or unavailable")
@@ -60,14 +63,9 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         headers = {"x-apikey": self._api_key}
 
         try:
-            # Use hass.async_add_executor_job for blocking network calls
-            # response = await self.hass.async_add_executor_job(
-            #     requests.get, url, headers=headers, timeout=10
-            # )
             response = await self.hass.async_add_executor_job(
                 lambda: requests.get(url, headers=headers)
             )
-            # response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
             data = response.json()
         except requests.exceptions.RequestException as err:
