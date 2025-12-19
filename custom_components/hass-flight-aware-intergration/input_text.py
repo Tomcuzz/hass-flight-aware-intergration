@@ -1,4 +1,3 @@
-
 from homeassistant.components.text import TextEntity
 
 # --- Platform Setup ---
