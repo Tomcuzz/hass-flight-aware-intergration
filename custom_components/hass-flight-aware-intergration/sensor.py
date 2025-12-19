@@ -1,7 +1,7 @@
 # sensor.py
 
 import logging
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 import requests
 
 from homeassistant.components.sensor import SensorEntity
@@ -70,7 +70,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Got exception: {err}") from err
 
         predicted_arrival = None
-        cutoff = datetime.now() - timedelta(minutes=60)
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=60)
         if data.get('flights'):
             for flight in data.get('flights'):
                 if not 'estimated_in' in flight.keys():
