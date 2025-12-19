@@ -72,6 +72,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         predicted_arrival = None
         arrival_airport = None
         departing_airport = None
+        scheduled_out = None
         cutoff = datetime.now(timezone.utc) - timedelta(minutes=120)
         if data.get('flights'):
             for flight in data.get('flights'):
@@ -86,11 +87,14 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                         arrival_airport = flight['destination']['code_iata']
                     if flight.get('origin') and flight.get('origin').get('code_iata'):
                         departing_airport = flight['origin']['code_iata']
+                    if light.get('scheduled_out'):
+                        scheduled_out = flight['scheduled_out']
 
             self.flight_data = {
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport
+                "scheduled_depature": scheduled_out
             }
             return self.flight_data
         else:
@@ -209,6 +213,6 @@ class FlightAwareScheduledDepartingTimeSensor(FlightAwareSensor):
         self._attr_name = "Flight Scheduled Departing Time"
         self._attr_unique_id = f"flightaware_scheduled_departing_time_{coordinator.config_entry.entry_id}"
         self._attr_icon = "mdi:airplane-takeoff"
-        self._data_id = "scheduled_out"
+        self._data_id = "scheduled_depature"
 
 
