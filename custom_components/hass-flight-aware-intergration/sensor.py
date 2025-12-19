@@ -39,8 +39,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Fetch data from API."""
-        # This function runs on the polling interval
-
+        # This function runs on the polling interval or when the flight number is updated
         flight_entity = self.hass.states.get(FLIGHT_NUMBER_INPUT)
         
         if flight_entity is None:
@@ -48,8 +47,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             return UpdateFailed(f"Input text entity '{FLIGHT_NUMBER_INPUT}' not found") # Or raise UpdateFailed
         
         flight_number = flight_entity.state
-        self.flight_data = {"predicted_arrival": flight_number}
-        return self.flight_data
         
         if not flight_number or flight_number in ["unknown", "unavailable"]:
             _LOGGER.debug("Flight number is empty or unavailable")
