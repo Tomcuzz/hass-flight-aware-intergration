@@ -85,7 +85,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                     if flight.get('destination') and flight.get('destination').get('code_iata'):
                         arrival_airport = flight['destination']['code_iata']
                     if flight.get('origin') and flight.get('origin').get('code_iata'):
-                        arrival_airport = flight['origin']['code_iata']
+                        departing_airport = flight['origin']['code_iata']
 
             self.flight_data = {
                 "predicted_arrival": predicted_arrival,
