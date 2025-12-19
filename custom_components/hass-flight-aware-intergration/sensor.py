@@ -93,7 +93,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             self.flight_data = {
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
-                "arrival_airport": arrival_airport
+                "arrival_airport": arrival_airport,
                 "scheduled_depature": scheduled_out
             }
             return self.flight_data
