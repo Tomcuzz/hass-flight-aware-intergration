@@ -51,7 +51,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
     
     @callback
     def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
-        await self._async_update_data()
+        self._async_update_data()
 
     async def _async_update_data(self):
         """Fetch data from API."""
