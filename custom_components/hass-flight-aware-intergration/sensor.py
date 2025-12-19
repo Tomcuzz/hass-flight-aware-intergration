@@ -112,8 +112,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     async_add_entities([
         # flight_input,
-        FlightAwareArrivalSensor(coordinator),
-        FlightAwareDepartingAirport(coordinator),
+        FlightAwareArrivalAirportSensor(coordinator),
+        FlightAwareDepartingAirportSensor(coordinator),
         FlightAwarePredictedArrivalSensor(coordinator)
     ], True)
 
@@ -162,14 +162,14 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
         await self.coordinator.async_request_refresh()
 
 # --- Sensor Entity ---
-class FlightAwareArrivalSensor(CoordinatorEntity, SensorEntity):
+class FlightAwareArrivalAirportSensor(CoordinatorEntity, SensorEntity):
     """Representation of a FlightAware Arrival Time sensor."""
 
     def __init__(self, coordinator):
         """Initialize the sensor."""
         self.coordinator = coordinator
         self._attr_name = "Flight Arrival Airport"
-        self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
+        self._attr_unique_id = f"flightaware_arrival_airport_{coordinator.config_entry.entry_id}"
         self._attr_icon = "mdi:airplane-landing"
 
     @property
@@ -207,58 +207,13 @@ class FlightAwareArrivalSensor(CoordinatorEntity, SensorEntity):
 
 
 # --- Sensor Entity ---
-class FlightAwareDepartingAirport(CoordinatorEntity, SensorEntity):
+class FlightAwareDepartingAirportSensor(CoordinatorEntity, SensorEntity):
     """Representation of a FlightAware Depature Airport sensor."""
 
     def __init__(self, coordinator):
         """Initialize the sensor."""
         self.coordinator = coordinator
         self._attr_name = "Flight Departing Airport"
-        self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
-        self._attr_icon = "mdi:airplane-takeoff"
-
-    @property
-    def native_value(self):
-        """Return the state of the sensor."""
-        # 1. Check if coordinator data exists at all
-        if self.coordinator.flight_data is None:
-            return "unavailable"
-    
-        # 2. Safely get the value
-        return self.coordinator.flight_data.get("departing_airport")
-    
-    @property
-    def should_poll(self):
-        """Return True if entity should be polled. Using coordinator, so False."""
-        return False
-
-    @property
-    def available(self) -> bool:
-        """Return True if entity is available."""
-        return self.coordinator.last_update_success
-
-    async def async_added_to_hass(self):
-        """When entity is added to hass."""
-        self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
-        self.async_on_remove(async_track_state_change_event(self.coordinator.hass, [FLIGHT_NUMBER_INPUT], self._async_on_change))
-    
-    @callback
-    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
-        self.async_schedule_update_ha_state(True)
-        
-    async def async_update(self):
-        """Update the entity's data from the coordinator."""
-        await self.coordinator.async_request_refresh()
-
-
-# --- Sensor Entity ---
-class FlightAwarePredictedDepartingAirport(CoordinatorEntity, SensorEntity):
-    """Representation of a FlightAware Predicted Arrival Time sensor."""
-
-    def __init__(self, coordinator):
-        """Initialize the sensor."""
-        self.coordinator = coordinator
-        self._attr_name = "Predicted Flight Departing Airport"
         self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
         self._attr_icon = "mdi:airplane-takeoff"
 
