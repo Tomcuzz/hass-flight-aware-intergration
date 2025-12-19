@@ -1,4 +1,4 @@
-from homeassistant.components.text import TextEntity
+from homeassistant.components.text import RestoreText
 
 # --- Platform Setup ---
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -8,7 +8,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         FlightAwarePredictedFlightInput()
     ], True)
 
-class FlightAwarePredictedFlightInput(TextEntity):
+class FlightAwarePredictedFlightInput(RestoreText):
     # Implement one of these methods.
     def __init__(self):
         """Initialize the sensor."""
