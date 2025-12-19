@@ -40,12 +40,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Fetch data from API."""
         # This function runs on the polling interval
-        
-        # In a real integration, the flight number would be a user option 
-        # on the entity itself, or a service call, but for this simpler 
-        # design, we'll keep the input_text dependency as before, 
-        # passed into the coordinator on creation or via an update.
-        # flight_number = self.hass.states.get("input_text.flight_number_to_track").state
 
         flight_entity = self.hass.states.get(FLIGHT_NUMBER_INPUT)
         
@@ -56,8 +50,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         flight_number = flight_entity.state
         self.flight_data = {"predicted_arrival": flight_number}
         return self.flight_data
-        
-        # flight_number = "BA825"
         
         if not flight_number or flight_number in ["unknown", "unavailable"]:
             _LOGGER.debug("Flight number is empty or unavailable")
@@ -182,15 +174,7 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
     @callback
     def _handle_input_change(self, event):
         """Handle the input text state change."""
-        # Get the new state object from the event
-        new_state = event.data.get("new_state")
-        
-        if new_state is None:
-            return
-
-        # Force an immediate update of the sensor
-        # The 'True' argument forces a call to your update() or async_update() method
-        self.coordinator._async_update_data()
+        await self.coordinator._async_update_data()
         
     async def async_update(self):
         """Update the entity's data from the coordinator."""
