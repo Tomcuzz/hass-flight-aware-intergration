@@ -12,7 +12,7 @@ class FlightAwarePredictedFlightInput(TextEntity):
     # Implement one of these methods.
     def __init__(self):
         """Initialize the sensor."""
-        self._attr_name = "Predicted Flight Input"
+        self._attr_name = "Flight Number To Track"
         self._attr_unique_id = f"flight_number_to_track"
         self._attr_icon = "mdi:airplane-takeoff"
         self._attr_native_value = ""
