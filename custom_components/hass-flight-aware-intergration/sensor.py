@@ -36,22 +36,6 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=1), # Temporary default, set by sensor later
         )
         self.flight_data = {}
-    
-    async def async_added_to_hass(self):
-        """When entity is added to hass."""
-        # This tells HA to call self._handle_input_change whenever 
-        # input_text.flight_number_to_track changes state.
-        self.async_on_remove(
-            async_track_state_change_event(
-                self.hass,
-                [FLIGHT_NUMBER_INPUT],
-                self._async_on_change
-            )
-        )
-    
-    @callback
-    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
-        self._async_update_data()
 
     async def _async_update_data(self):
         """Fetch data from API."""
@@ -176,6 +160,11 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
     async def async_added_to_hass(self):
         """When entity is added to hass."""
         self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
+        self.async_on_remove(async_track_state_change_event(self.coordinator.hass, [FLIGHT_NUMBER_INPUT], self._async_on_change))
+    
+    @callback
+    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
+        self.async_update()
         
     async def async_update(self):
         """Update the entity's data from the coordinator."""
