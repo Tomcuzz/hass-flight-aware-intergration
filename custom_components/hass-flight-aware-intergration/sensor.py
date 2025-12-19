@@ -75,7 +75,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             for flight in data.get('flights'):
                 if not 'estimated_in' in flight.keys():
                     continue
-                dt = datetime.fromisoformat(flight['estimated_in']
+                dt = datetime.fromisoformat(flight['estimated_in'])
                 if dt < cutoff:
                     continue
                 if predicted_arrival == None or dt < predicted_arrival:
