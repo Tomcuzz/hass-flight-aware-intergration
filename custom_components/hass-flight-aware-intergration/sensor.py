@@ -164,7 +164,7 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
     
     @callback
     def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
-        self.async_update()
+        self.async_schedule_update_ha_state(True)
         
     async def async_update(self):
         """Update the entity's data from the coordinator."""
