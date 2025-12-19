@@ -70,7 +70,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Got exception: {err}") from err
 
         predicted_arrival = None
-        cutoff = datetime.datetime.now() - datetime.timedelta(minutes=60)
+        cutoff = datetime.now() - timedelta(minutes=60)
         if data.get('flights'):
             for flight in data.get('flights'):
                 if not 'estimated_in' in flight.keys():
