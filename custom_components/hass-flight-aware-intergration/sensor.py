@@ -70,6 +70,8 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Got exception: {err}") from err
 
         predicted_arrival = None
+        arrival_airport = None
+        departing_airport = None
         cutoff = datetime.now(timezone.utc) - timedelta(minutes=60)
         if data.get('flights'):
             for flight in data.get('flights'):
@@ -80,8 +82,16 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                     continue
                 if predicted_arrival == None or dt < predicted_arrival:
                     predicted_arrival = dt
+                    if flight.get('destination') and flight.get('destination').get('code_iata'):
+                        arrival_airport = flight['destination']['code_iata']
+                    if flight.get('origin') and flight.get('origin').get('code_iata'):
+                        arrival_airport = flight['origin']['code_iata']
 
-            self.flight_data = {"predicted_arrival": predicted_arrival}
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport
+            }
             return self.flight_data
         else:
             raise UpdateFailed("Predicted arrival time not found in response.")
@@ -102,7 +112,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     async_add_entities([
         # flight_input,
-        FlightAwarePredictedArrivalSensor(coordinator)
+        FlightAwarePredictedArrivalSensor(coordinator),
+        FlightAwarePredictedArrivalAirport(coordinator),
+        FlightAwarePredictedDepartingAirport(coordinator)
     ], True)
 
 # --- Sensor Entity ---
@@ -125,6 +137,140 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
     
         # 2. Safely get the value
         return self.coordinator.flight_data.get("predicted_arrival")
+    
+    @property
+    def should_poll(self):
+        """Return True if entity should be polled. Using coordinator, so False."""
+        return False
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self.coordinator.last_update_success
+
+    async def async_added_to_hass(self):
+        """When entity is added to hass."""
+        self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
+        self.async_on_remove(async_track_state_change_event(self.coordinator.hass, [FLIGHT_NUMBER_INPUT], self._async_on_change))
+    
+    @callback
+    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
+        self.async_schedule_update_ha_state(True)
+        
+    async def async_update(self):
+        """Update the entity's data from the coordinator."""
+        await self.coordinator.async_request_refresh()
+
+# --- Sensor Entity ---
+class FlightAwarePredictedArrivalAirport(CoordinatorEntity, SensorEntity):
+    """Representation of a FlightAware Predicted Arrival Time sensor."""
+
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self._attr_name = "Predicted Flight Arrival Airport"
+        self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
+        self._attr_icon = "mdi:airplane-landing"
+
+    @property
+    def native_value(self):
+        """Return the state of the sensor."""
+        # 1. Check if coordinator data exists at all
+        if self.coordinator.flight_data is None:
+            return "unavailable"
+    
+        # 2. Safely get the value
+        return self.coordinator.flight_data.get("arrival_airport")
+    
+    @property
+    def should_poll(self):
+        """Return True if entity should be polled. Using coordinator, so False."""
+        return False
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self.coordinator.last_update_success
+
+    async def async_added_to_hass(self):
+        """When entity is added to hass."""
+        self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
+        self.async_on_remove(async_track_state_change_event(self.coordinator.hass, [FLIGHT_NUMBER_INPUT], self._async_on_change))
+    
+    @callback
+    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
+        self.async_schedule_update_ha_state(True)
+        
+    async def async_update(self):
+        """Update the entity's data from the coordinator."""
+        await self.coordinator.async_request_refresh()
+
+
+# --- Sensor Entity ---
+class FlightAwarePredictedDepartingAirport(CoordinatorEntity, SensorEntity):
+    """Representation of a FlightAware Predicted Arrival Time sensor."""
+
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self._attr_name = "Predicted Flight Departing Airport"
+        self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
+        self._attr_icon = "mdi:airplane-takeoff"
+
+    @property
+    def native_value(self):
+        """Return the state of the sensor."""
+        # 1. Check if coordinator data exists at all
+        if self.coordinator.flight_data is None:
+            return "unavailable"
+    
+        # 2. Safely get the value
+        return self.coordinator.flight_data.get("departing_airport")
+    
+    @property
+    def should_poll(self):
+        """Return True if entity should be polled. Using coordinator, so False."""
+        return False
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self.coordinator.last_update_success
+
+    async def async_added_to_hass(self):
+        """When entity is added to hass."""
+        self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
+        self.async_on_remove(async_track_state_change_event(self.coordinator.hass, [FLIGHT_NUMBER_INPUT], self._async_on_change))
+    
+    @callback
+    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
+        self.async_schedule_update_ha_state(True)
+        
+    async def async_update(self):
+        """Update the entity's data from the coordinator."""
+        await self.coordinator.async_request_refresh()
+
+
+# --- Sensor Entity ---
+class FlightAwarePredictedDepartingAirport(CoordinatorEntity, SensorEntity):
+    """Representation of a FlightAware Predicted Arrival Time sensor."""
+
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self._attr_name = "Predicted Flight Departing Airport"
+        self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
+        self._attr_icon = "mdi:airplane-takeoff"
+
+    @property
+    def native_value(self):
+        """Return the state of the sensor."""
+        # 1. Check if coordinator data exists at all
+        if self.coordinator.flight_data is None:
+            return "unavailable"
+    
+        # 2. Safely get the value
+        return self.coordinator.flight_data.get("departing_airport")
     
     @property
     def should_poll(self):
