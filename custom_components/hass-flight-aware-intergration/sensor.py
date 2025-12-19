@@ -87,7 +87,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                         arrival_airport = flight['destination']['code_iata']
                     if flight.get('origin') and flight.get('origin').get('code_iata'):
                         departing_airport = flight['origin']['code_iata']
-                    if light.get('scheduled_out'):
+                    if flight.get('scheduled_out'):
                         scheduled_out = flight['scheduled_out']
 
             self.flight_data = {
