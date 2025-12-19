@@ -17,7 +17,7 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-FLIGHT_NUMBER_INPUT = "input_text.flight_number_to_track"
+FLIGHT_NUMBER_INPUT = "text.flight_number_to_track"
 
 # --- Data Fetching Class (Centralized Logic) ---
 class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
