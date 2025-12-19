@@ -190,7 +190,7 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
 
         # Force an immediate update of the sensor
         # The 'True' argument forces a call to your update() or async_update() method
-        self.coordinator.async_request_refresh()
+        self.coordinator._async_update_data()
         
     async def async_update(self):
         """Update the entity's data from the coordinator."""
