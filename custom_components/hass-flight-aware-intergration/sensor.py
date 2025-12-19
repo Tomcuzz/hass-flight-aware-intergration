@@ -11,8 +11,7 @@ from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.helpers.entity import DeviceInfo
 
 from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.const import EVENT_HOMEASSISTANT_START
-from homeassistant.core import callback
+from homeassistant.core import Event, EventStateChangedData, callback
 
 from .const import DOMAIN
 
@@ -26,6 +25,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass, api_key):
         """Initialize the coordinator."""
+        self.hass = hass
         self._api_key = api_key
         self.flight_input = ""
         # The update_interval will be set when the sensor is loaded from the Config Entry
@@ -36,6 +36,22 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=1), # Temporary default, set by sensor later
         )
         self.flight_data = {}
+    
+    async def async_added_to_hass(self):
+        """When entity is added to hass."""
+        # This tells HA to call self._handle_input_change whenever 
+        # input_text.flight_number_to_track changes state.
+        self.async_on_remove(
+            async_track_state_change_event(
+                self.hass,
+                [FLIGHT_NUMBER_INPUT],
+                self._async_on_change
+            )
+        )
+    
+    @callback
+    def _async_on_change(self, event: Event[EventStateChangedData]) -> None:
+        await self._async_update_data()
 
     async def _async_update_data(self):
         """Fetch data from API."""
@@ -160,21 +176,6 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
     async def async_added_to_hass(self):
         """When entity is added to hass."""
         self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
-        
-        # This tells HA to call self._handle_input_change whenever 
-        # input_text.flight_number_to_track changes state.
-        self.async_on_remove(
-            async_track_state_change_event(
-                self.hass,
-                [FLIGHT_NUMBER_INPUT],
-                self._handle_input_change
-            )
-        )
-        
-    @callback
-    def _handle_input_change(self, event):
-        """Handle the input text state change."""
-        await self.coordinator._async_update_data()
         
     async def async_update(self):
         """Update the entity's data from the coordinator."""
