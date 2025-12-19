@@ -72,7 +72,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         predicted_arrival = None
         arrival_airport = None
         departing_airport = None
-        cutoff = datetime.now(timezone.utc) - timedelta(minutes=60)
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=120)
         if data.get('flights'):
             for flight in data.get('flights'):
                 if not 'estimated_in' in flight.keys():
