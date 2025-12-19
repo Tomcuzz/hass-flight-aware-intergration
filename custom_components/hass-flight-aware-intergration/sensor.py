@@ -99,33 +99,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     # Create the coordinator and set the user-defined polling interval
     coordinator = FlightAwareDataUpdateCoordinator(hass, api_key)
     coordinator.update_interval = timedelta(seconds=interval_seconds)
-    
-    # flight_input = FlightAwarePredictedFlightInput(coordinator)
-    # coordinator.flight_input = flight_input.unique_id
-
-    # Initial fetch
-    # await coordinator.async_config_entry_first_refresh()
 
     async_add_entities([
         # flight_input,
         FlightAwarePredictedArrivalSensor(coordinator)
     ], True)
-
-
-# class FlightAwarePredictedFlightInput(TextEntity):
-#     # Implement one of these methods.
-#     def __init__(self, coordinator):
-#         """Initialize the sensor."""
-#         self.coordinator = coordinator
-#         self._attr_name = "Predicted Flight Input"
-#         self._attr_unique_id = f"flightaware_flight_number_{coordinator.config_entry.entry_id}"
-#         self.unique_id = self._attr_unique_id
-#         self._attr_icon = "mdi:airplane-takeoff"
-#         self._attr_native_value = ""
-
-#     async def async_set_value(self, value: str) -> None:
-#         """Set the text value."""
-#         self._attr_native_value = value
 
 # --- Sensor Entity ---
 class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
