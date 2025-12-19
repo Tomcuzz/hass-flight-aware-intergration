@@ -6,7 +6,7 @@ from datetime import timedelta
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from .sensor import FlightAwareDataUpdateCoordinator, FlightAwarePredictedArrivalSensor
-from .input_text import FlightAwarePredictedFlightInput
+from .text import FlightAwarePredictedFlightInput
 
 from .const import DOMAIN, PLATFORMS
 
