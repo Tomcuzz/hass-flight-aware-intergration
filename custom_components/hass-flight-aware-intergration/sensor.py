@@ -112,9 +112,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     async_add_entities([
         # flight_input,
-        FlightAwarePredictedArrivalSensor(coordinator),
-        FlightAwarePredictedArrivalAirport(coordinator),
-        FlightAwarePredictedDepartingAirport(coordinator)
+        FlightAwareArrivalSensor(coordinator),
+        FlightAwareDepartingAirport(coordinator),
+        FlightAwarePredictedArrivalSensor(coordinator)
     ], True)
 
 # --- Sensor Entity ---
@@ -162,13 +162,13 @@ class FlightAwarePredictedArrivalSensor(CoordinatorEntity, SensorEntity):
         await self.coordinator.async_request_refresh()
 
 # --- Sensor Entity ---
-class FlightAwarePredictedArrivalAirport(CoordinatorEntity, SensorEntity):
-    """Representation of a FlightAware Predicted Arrival Time sensor."""
+class FlightAwareArrivalSensor(CoordinatorEntity, SensorEntity):
+    """Representation of a FlightAware Arrival Time sensor."""
 
     def __init__(self, coordinator):
         """Initialize the sensor."""
         self.coordinator = coordinator
-        self._attr_name = "Predicted Flight Arrival Airport"
+        self._attr_name = "Flight Arrival Airport"
         self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
         self._attr_icon = "mdi:airplane-landing"
 
@@ -207,13 +207,13 @@ class FlightAwarePredictedArrivalAirport(CoordinatorEntity, SensorEntity):
 
 
 # --- Sensor Entity ---
-class FlightAwarePredictedDepartingAirport(CoordinatorEntity, SensorEntity):
-    """Representation of a FlightAware Predicted Arrival Time sensor."""
+class FlightAwareDepartingAirport(CoordinatorEntity, SensorEntity):
+    """Representation of a FlightAware Depature Airport sensor."""
 
     def __init__(self, coordinator):
         """Initialize the sensor."""
         self.coordinator = coordinator
-        self._attr_name = "Predicted Flight Departing Airport"
+        self._attr_name = "Flight Departing Airport"
         self._attr_unique_id = f"flightaware_departing_airport_{coordinator.config_entry.entry_id}"
         self._attr_icon = "mdi:airplane-takeoff"
 
