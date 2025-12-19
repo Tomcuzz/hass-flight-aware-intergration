@@ -1,7 +1,7 @@
 # sensor.py
 
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 import requests
 
 from homeassistant.components.sensor import SensorEntity
@@ -70,13 +70,17 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Got exception: {err}") from err
 
         predicted_arrival = None
+        cutoff = datetime.datetime.now() - datetime.timedelta(minutes=60)
         if data.get('flights'):
-            flight_info = data['flights'][0]
-            # Assumed key for demonstration
-            predicted_arrival = flight_info.get('estimated_in') 
+            for flight in data.get('flights'):
+                if not 'estimated_in' in flight.keys():
+                    continue
+                dt = datetime.fromisoformat(flight['estimated_in']
+                if dt < cutoff:
+                    continue
+                if predicted_arrival == None or dt < predicted_arrival:
+                    predicted_arrival = dt
 
-        if predicted_arrival:
-            # Store the data
             self.flight_data = {"predicted_arrival": predicted_arrival}
             return self.flight_data
         else:
