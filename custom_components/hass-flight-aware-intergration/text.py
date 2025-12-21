@@ -8,6 +8,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         FlightAwarePredictedFlightInput()
     ], True)
 
+_LOGGER = logging.getLogger(__name__)
+
 class FlightAwarePredictedFlightInput(RestoreText):
     # Implement one of these methods.
     def __init__(self):
