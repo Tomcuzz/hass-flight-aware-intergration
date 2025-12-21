@@ -48,7 +48,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         
         flight_number = flight_entity.state
         
-        if not flight_number or flight_number in ["", "unknown", "unavailable"]:
+        if not flight_number or flight_number in ["", "unknown", "unavailable", "unavailable", "Unavailable"]:
             _LOGGER.debug("Flight number is empty or unavailable")
             return UpdateFailed("Flight number is empty or unavailable")
         
