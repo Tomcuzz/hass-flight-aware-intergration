@@ -1,5 +1,6 @@
 from homeassistant.components.text import RestoreText
 
+import logging
 _LOGGER = logging.getLogger(__name__)
 
 # --- Platform Setup ---
