@@ -1,5 +1,7 @@
 from homeassistant.components.text import RestoreText
 
+_LOGGER = logging.getLogger(__name__)
+
 # --- Platform Setup ---
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the input_text platform."""
@@ -7,8 +9,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([
         FlightAwarePredictedFlightInput()
     ], True)
-
-_LOGGER = logging.getLogger(__name__)
 
 class FlightAwarePredictedFlightInput(RestoreText):
     # Implement one of these methods.
