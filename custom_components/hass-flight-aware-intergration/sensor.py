@@ -42,7 +42,18 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         # This function runs on the polling interval or when the flight number is updated
         flight_entity = self.hass.states.get(FLIGHT_NUMBER_INPUT)
         
+        predicted_arrival = None
+        arrival_airport = None
+        departing_airport = None
+        scheduled_out = None
+        
         if flight_entity is None:
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport,
+                "scheduled_depature": scheduled_out
+            }
             _LOGGER.warning(f"Input text entity '{FLIGHT_NUMBER_INPUT}' not found")
             return UpdateFailed(f"Input text entity '{FLIGHT_NUMBER_INPUT}' not found") # Or raise UpdateFailed
         
@@ -50,9 +61,21 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         
         if not flight_number or flight_number in ["", " ", "unknown", "Unknown", "unavailable", "Unavailable"]:
             _LOGGER.debug("Flight number is empty or unavailable")
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport,
+                "scheduled_depature": scheduled_out
+            }
             return UpdateFailed("Flight number is empty or unavailable")
         
         if not flight_number:
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport,
+                "scheduled_depature": scheduled_out
+            }
             raise UpdateFailed("Flight number input is empty.")
 
         url = f"https://aeroapi.flightaware.com/aeroapi/flights/{flight_number}"
@@ -65,14 +88,22 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             response.raise_for_status()
             data = response.json()
         except requests.exceptions.RequestException as err:
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport,
+                "scheduled_depature": scheduled_out
+            }
             raise UpdateFailed(f"Error fetching data from FlightAware API: {err}") from err
         except Exception as err:
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport,
+                "scheduled_depature": scheduled_out
+            }
             raise UpdateFailed(f"Got exception: {err}") from err
 
-        predicted_arrival = None
-        arrival_airport = None
-        departing_airport = None
-        scheduled_out = None
         cutoff = datetime.now(timezone.utc) - timedelta(minutes=120)
         if data.get('flights'):
             for flight in data.get('flights'):
@@ -98,6 +129,12 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
             }
             return self.flight_data
         else:
+            self.flight_data = {
+                "predicted_arrival": predicted_arrival,
+                "departing_airport": departing_airport,
+                "arrival_airport": arrival_airport,
+                "scheduled_depature": scheduled_out
+            }
             raise UpdateFailed("Predicted arrival time not found in response.")
         
 
