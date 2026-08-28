@@ -46,13 +46,15 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         arrival_airport = None
         departing_airport = None
         scheduled_out = None
+        registration = None
         
         if flight_entity is None:
             self.flight_data = {
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             _LOGGER.warning(f"Input text entity '{FLIGHT_NUMBER_INPUT}' not found")
             return UpdateFailed(f"Input text entity '{FLIGHT_NUMBER_INPUT}' not found") # Or raise UpdateFailed
@@ -65,7 +67,8 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             return UpdateFailed("Flight number is empty or unavailable")
         
@@ -74,7 +77,8 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             raise UpdateFailed("Flight number input is empty.")
 
@@ -92,7 +96,8 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             raise UpdateFailed(f"Error fetching data from FlightAware API: {err}") from err
         except Exception as err:
@@ -100,7 +105,8 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             raise UpdateFailed(f"Got exception: {err}") from err
 
@@ -120,12 +126,15 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                         departing_airport = flight['origin']['code_iata']
                     if flight.get('scheduled_out'):
                         scheduled_out = flight['scheduled_out']
+                    if flight.get('registration'):
+                        registration = flight['registration']
 
             self.flight_data = {
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             return self.flight_data
         else:
@@ -133,7 +142,8 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
                 "predicted_arrival": predicted_arrival,
                 "departing_airport": departing_airport,
                 "arrival_airport": arrival_airport,
-                "scheduled_depature": scheduled_out
+                "scheduled_depature": scheduled_out,
+                "registration": registration
             }
             raise UpdateFailed("Predicted arrival time not found in response.")
         
@@ -156,7 +166,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         FlightAwareArrivalAirportSensor(coordinator),
         FlightAwareDepartingAirportSensor(coordinator),
         FlightAwarePredictedArrivalSensor(coordinator),
-        FlightAwareScheduledDepartingTimeSensor(coordinator)
+        FlightAwareScheduledDepartingTimeSensor(coordinator),
+        FlightAwareRegistrationSensor(coordinator)
     ], True)
 
 # --- Sensor Entity ---
@@ -252,4 +263,15 @@ class FlightAwareScheduledDepartingTimeSensor(FlightAwareSensor):
         self._attr_icon = "mdi:airplane-takeoff"
         self._data_id = "scheduled_depature"
 
+# --- Sensor Entity ---
+class FlightAwareRegistrationSensor(FlightAwareSensor):
+    """Representation of a FlightAware Registration."""
+
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self._attr_name = "Flight Registration"
+        self._attr_unique_id = f"flightaware_registration_{coordinator.config_entry.entry_id}"
+        self._attr_icon = "mdi:id-card"
+        self._data_id = "registration"
 
