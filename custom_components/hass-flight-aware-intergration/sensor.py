@@ -47,7 +47,7 @@ class FlightAwareDataUpdateCoordinator(DataUpdateCoordinator):
         departing_airport = None
         scheduled_out = None
         registration = None
-        gate
+        gate = None
         
         if flight_entity is None:
             self.flight_data = {
